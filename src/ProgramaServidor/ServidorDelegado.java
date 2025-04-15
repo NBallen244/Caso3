@@ -1,5 +1,5 @@
 package ProgramaServidor;
 
-public class ServidorDelegado {
+public class ServidorDelegado extends Thread {
     
 }

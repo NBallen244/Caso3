@@ -1,5 +1,5 @@
 package ProgramaCliente;
 
-public class ClienteDelegado {
+public class ClienteDelegado extends Thread {
     
 }
