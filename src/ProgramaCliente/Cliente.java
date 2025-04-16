@@ -24,10 +24,10 @@ public class Cliente  {
             e.printStackTrace();
             System.exit(-1);
         }
-        BufferedReader lectura = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader lecturaConsola = new BufferedReader(new InputStreamReader(System.in));
         
-        ProtocoloCliente.procesar(lectura,lector,escritor);
-        lectura.close();
+        ProtocoloCliente.procesar(lecturaConsola,lector,escritor);
+        lecturaConsola.close();
         escritor.close();
         lector.close();
         socket.close();
