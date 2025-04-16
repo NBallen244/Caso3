@@ -10,6 +10,7 @@ public class Autenticacion {
     private static final String ALGORITMO_HMAC = "HmacSHA256";
     private static final String ALGORITMO_FIRMA = "SHA256withRSA";
 
+    //* Genera un HMAC de un mensaje usando una llave secreta dada */
     public static byte[] generarHmac(byte[] mensaje, SecretKey llave) {
         byte[] hmac = null;
         try {
@@ -22,6 +23,7 @@ public class Autenticacion {
         return hmac;
     }
 
+    //* Genera una firma digital de un mensaje usando una llave privada dada */
     public static byte[] generarFirma(byte[] mensaje, PrivateKey llavePrivada) {
         byte[] firma = null;
         try {

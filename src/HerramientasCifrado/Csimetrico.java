@@ -8,14 +8,15 @@ import javax.crypto.spec.IvParameterSpec;
 public class Csimetrico {
     private static final String ALGORITMO = "AES/CBC/PKCS5Padding";
 
-    public static byte[] cifrar(String reto, Key llave, byte[] iv){
+    //Cifra un mensaje en formato byte[] usando una llave simetrica y un vector de inicializacion dados
+    public static byte[] cifrar(byte[] reto, Key llave, byte[] iv){
         byte[] retoCifrado;
         try {
             IvParameterSpec vectorI = new IvParameterSpec(iv);
             // Se inicializa el cifrador en modo cifrado
             Cipher cipher = Cipher.getInstance(ALGORITMO);
             cipher.init(Cipher.ENCRYPT_MODE, llave, vectorI);
-            byte[] retoClaro = reto.getBytes();  
+            byte[] retoClaro = reto;  
             retoCifrado = cipher.doFinal(retoClaro);
             
         } catch (Exception e) {
@@ -24,6 +25,7 @@ public class Csimetrico {
         return retoCifrado;
     }
 
+    //*Descifra un mensaje en formato byte[] usando una llave simetrica y un vector de inicializacion dados*/
     public static byte[] decifrar(byte[] retoCifrado, Key llave, byte[] iv){
         byte[] retoClaro;
         try {

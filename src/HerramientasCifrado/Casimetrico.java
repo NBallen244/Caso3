@@ -1,18 +1,20 @@
 package HerramientasCifrado;
 
-import java.security.Key;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 
 import javax.crypto.Cipher;
 
 public class Casimetrico {
     private static final String ALGORITMO = "RSA";
 
-    public static byte[] cifrar(String reto, Key llave){
+    //* Cifra un mensaje en formato byte[] usando una llave publica dada */
+    public static byte[] cifrar(byte[] reto, PublicKey llave){
         byte[] retoCifrado;
         try {
             Cipher cipher = Cipher.getInstance(ALGORITMO);
             cipher.init(Cipher.ENCRYPT_MODE, llave);
-            byte[] retoClaro = reto.getBytes();  
+            byte[] retoClaro = reto;  
             retoCifrado = cipher.doFinal(retoClaro);
             
         } catch (Exception e) {
@@ -21,7 +23,8 @@ public class Casimetrico {
         return retoCifrado;
     }
 
-    public static byte[] decifrar(byte[] retoCifrado, Key llave){
+    //* Descifra un mensaje en formato byte[] usando una llave privada dada */
+    public static byte[] decifrar(byte[] retoCifrado, PrivateKey llave){
         byte[] retoClaro;
         try {
             Cipher cipher = Cipher.getInstance(ALGORITMO);

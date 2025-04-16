@@ -22,6 +22,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class GenLlaves {
 
+    //*Genera las llaves a asimetricas del algoritmo RSA y las guarda en 2 archivos */
     public static void generarLlavesAsimetricas() {
         try {
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
@@ -47,7 +48,7 @@ public class GenLlaves {
         }
     }
 
-
+    //*Recupera la llave privada del RSA desde el archivo*/
     public static PrivateKey recuperarKprivada(){
         PrivateKey llavePrivada = null;
         try {
@@ -61,6 +62,7 @@ public class GenLlaves {
         return llavePrivada;
     }
 
+    //*Recupera la llave publica del RSA desde el archivo*/
     public static PublicKey recuperarKpublica(){
         PublicKey llavePrivada = null;
         try {
@@ -74,6 +76,7 @@ public class GenLlaves {
         return llavePrivada;
     }
 
+    //*genera el vector de inicio aleatorio*/
     public static byte[] generarVectorI(){
         byte[] vectorI = new byte[16];
         for (int i = 0; i < vectorI.length; i++) {
@@ -82,6 +85,7 @@ public class GenLlaves {
         return vectorI;
     }
 
+    //*Genera los parametros del algoritmo Diffie-Hellman y los devuelve en un array de BigInteger*/
     public static BigInteger[] generarParametroDh() throws NoSuchAlgorithmException, InvalidParameterSpecException{
         AlgorithmParameterGenerator paramGen =AlgorithmParameterGenerator.getInstance("DiffieHellman");
         paramGen.init(1024);
@@ -95,21 +99,24 @@ public class GenLlaves {
         return parametros;
     }
 
+    //*Genera el parametro secreto del algoritmo Diffie-Hellman de una de las partes (x o y)*/
     public static BigInteger generarParamSecretoDh(BigInteger p) throws NoSuchAlgorithmException{
         BigInteger paramSecreto = p.subtract(BigInteger.valueOf(1L)).multiply(BigInteger.valueOf((long) (Math.random())));
         return paramSecreto;
     }
-
+    // *Genera el parametro publico del algoritmo Diffie-Hellman de una de las partes (G a la x o y mod p)*/
     public static BigInteger generarParamPublicoDh(BigInteger g, BigInteger paramSecreto, BigInteger p){
         BigInteger paramPublico = g.modPow(paramSecreto, p);
         return paramPublico;
     }
 
-    public static BigInteger generarLlaveDh(BigInteger paramPublico, BigInteger paramSecreto, BigInteger p) {
+    //*Genera la llave maestra del algoritmo Diffie-Hellman (G a la y*x mod p)*/
+     static BigInteger generarLlaveDh(BigInteger paramPublico, BigInteger paramSecreto, BigInteger p) {
         BigInteger llaveSimetrica = paramPublico.modPow(paramSecreto, p);
         return llaveSimetrica;
     }
 
+    //*A partir de una llave maestra genera la llave simetrica de cifrado y de autenticacion HMAC en un arreglo de SecretKeys */
     public static SecretKey[] generarLlavesSimetricas(BigInteger llaveSimetrica) {
         SecretKey[] llaves = new SecretKey[2];
         SecretKey ab1;
