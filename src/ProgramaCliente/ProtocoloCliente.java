@@ -7,9 +7,11 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class ProtocoloCliente {
-    public static void procesar(BufferedReader entradaConsola, BufferedReader lector, PrintWriter envio) throws IOException{
+    public static void procesar(BufferedReader entradaConsola, BufferedReader lector, PrintWriter envio)
+            throws IOException {
         String fromServer;
         List<Integer> ids = new ArrayList<>();
         List<String> nombres = new ArrayList<>();
@@ -19,7 +21,7 @@ public class ProtocoloCliente {
             String[] parts = linea.split("\\|", 2);
             int id = Integer.parseInt(parts[0]);
             String nombre = parts[1];
-            ids.add(id);    
+            ids.add(id);
             nombres.add(nombre);
             System.out.printf("%d: %s\n", id, nombre);
         }
@@ -37,12 +39,26 @@ public class ProtocoloCliente {
                 PrintWriter escritorDel = new PrintWriter(sockDel.getOutputStream(), true);
                 BufferedReader lectorDel = new BufferedReader(new InputStreamReader(sockDel.getInputStream()))) {
 
-            String mensaje;
-            while ((mensaje = entradaConsola.readLine()) != null) {
-                escritorDel.println(mensaje);
-                String respuesta = lectorDel.readLine();
-                System.out.println(respuesta);
+            Scanner scan = new Scanner(System.in);
+            System.out.println("Escribe el numero de consultas: ");
+            int numConsultas = scan.nextInt()  ;
+                         if (numConsultas == 32) {
+                    for (int i = 1; i <= numConsultas; i++) {
+                        String consulta = "Consulta " + i;
+                        escritorDel.println(consulta);
+                        String respuesta = lectorDel.readLine();
+                        System.out.printf("Respuesta %2d: %s%n", i, respuesta);
+                    }
+
+                } else {
+                    String mensaje;
+                    while ((mensaje = entradaConsola.readLine()) != null) {
+                        escritorDel.println(mensaje);
+                        String respuesta = lectorDel.readLine();
+                        System.out.println(respuesta);
+                    }
+                }
             }
         }
-    }
+    
 }

@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ProtocoloServidor implements Runnable{
@@ -55,7 +54,7 @@ public class ProtocoloServidor implements Runnable{
         try {
             elegido = Integer.parseInt(linea);
         } catch (NumberFormatException e) {
-            escritor.println("-1|-1");  
+            escritor.println("-1");  
             return;
         }
         String hostDelegado = sockCliente.getLocalAddress().getHostAddress();

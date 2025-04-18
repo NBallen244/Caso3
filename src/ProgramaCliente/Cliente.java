@@ -10,6 +10,7 @@ public class Cliente  {
     private static final int PUERTO=3400;
     private static final String HOST="localhost";
 
+    private static final int NUM_CONSULTAS = 32;
     public static void main(String[] args) throws IOException {
         Socket socket=null;
         PrintWriter escritor = null;
