@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.math.BigInteger;
 import java.security.AlgorithmParameterGenerator;
 import java.security.AlgorithmParameters;
+import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -26,9 +27,10 @@ public class GenLlaves {
     public static void generarLlavesAsimetricas() {
         try {
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-            keyGen.initialize(1048);
-            PublicKey publicKey = keyGen.generateKeyPair().getPublic();
-            PrivateKey privateKey = keyGen.generateKeyPair().getPrivate();
+            keyGen.initialize(1024);
+            KeyPair pareja= keyGen.generateKeyPair();
+            PublicKey publicKey = pareja.getPublic();
+            PrivateKey privateKey = pareja.getPrivate();
             
             // Guardar las llaves en archivos
             FileOutputStream  fosPublica = new FileOutputStream("llavePublica.txt");

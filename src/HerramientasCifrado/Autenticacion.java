@@ -1,7 +1,9 @@
 package HerramientasCifrado;
 
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.Signature;
+import java.util.Arrays;
 
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
@@ -35,5 +37,24 @@ public class Autenticacion {
             return null;
         }
         return firma;
+    }
+
+    public static boolean verificarFirma(byte[] mensaje, byte[] firma, PublicKey llavePublica) {
+        try {
+            Signature signature = Signature.getInstance(ALGORITMO_FIRMA);
+            signature.initVerify(llavePublica);
+            signature.update(mensaje);
+            return signature.verify(firma);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static boolean verificarHmac(byte[] mensaje, byte[] hmac, SecretKey llave) {
+        byte[] hmacGenerado = generarHmac(mensaje, llave);
+        if (hmacGenerado == null) {
+            return false;
+        }
+        return Arrays.equals(hmac, hmacGenerado);
     }
 }
