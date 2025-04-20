@@ -7,11 +7,10 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
 
 public class ProtocoloCliente {
-    public static void procesar(BufferedReader entradaConsola, BufferedReader lector, PrintWriter envio, int numPeticiones)
+    public static void procesar(BufferedReader entradaConsola, BufferedReader lector, PrintWriter envio,
+            int numPeticiones)
             throws IOException {
         String fromServer;
         List<Integer> ids = new ArrayList<>();
@@ -26,6 +25,10 @@ public class ProtocoloCliente {
             nombres.add(nombre);
             System.out.printf("%d: %s\n", id, nombre);
         }
+        System.out.print("Elige el ID del servicio: ");
+        String seleccion = entradaConsola.readLine();
+        envio.println(seleccion);
+
         fromServer = lector.readLine();
         String[] resp = fromServer.split("\\|");
         String host = resp[0];
@@ -36,26 +39,14 @@ public class ProtocoloCliente {
                 PrintWriter escritorDel = new PrintWriter(sockDel.getOutputStream(), true);
                 BufferedReader lectorDel = new BufferedReader(new InputStreamReader(sockDel.getInputStream()))) {
 
-            
-            
-            if (numPeticiones == 32) {
-                    for (int i = 1; i <= 32; i++) {
-                        String consulta = "Consulta " + i;
-                        escritorDel.println(consulta);
-                        String respuesta = lectorDel.readLine();
-                        System.out.printf("Respuesta %2d: %s%n", i, respuesta);
-                    }}
-            
-            if(numPeticiones ==1){
-                    Random rand = new Random();
-                    String mensaje;
-                        mensaje = rand.ints(1, 3).toString();
-                        escritorDel.println(mensaje);
-                        String respuesta = lectorDel.readLine();
-                        System.out.println(respuesta);
-                    
-                }
+            for (int i = 1; i <= numPeticiones; i++) {
+                String consulta = String.format("Consulta %d", i);
+                escritorDel.println(consulta);
+                String respDel = lectorDel.readLine();
+                System.out.printf("Respuesta %2d: %s%n", i, respDel);
             }
+
         }
-    
+    }
+
 }
