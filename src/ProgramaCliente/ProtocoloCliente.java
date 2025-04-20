@@ -40,17 +40,21 @@ public class ProtocoloCliente {
                 BufferedReader lectorDel = new BufferedReader(new InputStreamReader(sockDel.getInputStream()))) {
 
             Scanner scan = new Scanner(System.in);
-            System.out.println("Escribe el numero de consultas: ");
-            int numConsultas = scan.nextInt()  ;
-                         if (numConsultas == 32) {
-                    for (int i = 1; i <= numConsultas; i++) {
+            System.out.println("Escribe la opcion que necesites: ");
+            System.out.println("Escribe 1 si quieres 32 peticiones ");
+            System.out.println("Escribe 2 ");
+            System.out.println("Escribe 3 para enviar un mensaje al servidor: ");
+            int opcion = scan.nextInt()  ;
+            if (opcion == 1) {
+                    for (int i = 1; i <= 32; i++) {
                         String consulta = "Consulta " + i;
                         escritorDel.println(consulta);
                         String respuesta = lectorDel.readLine();
                         System.out.printf("Respuesta %2d: %s%n", i, respuesta);
-                    }
-
-                } else {
+                    }}
+            
+            if(opcion==3){
+                
                     String mensaje;
                     while ((mensaje = entradaConsola.readLine()) != null) {
                         escritorDel.println(mensaje);
