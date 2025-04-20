@@ -30,7 +30,6 @@ public class Casimetrico {
             Cipher cipher = Cipher.getInstance(ALGORITMO);
             cipher.init(Cipher.DECRYPT_MODE, llave);
             retoClaro = cipher.doFinal(retoCifrado);
-            int a=1;
             
         } catch (Exception e) {
             e.printStackTrace();
