@@ -6,10 +6,14 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+
 public class ProtocoloServidor implements Runnable{
     private Socket sockCliente;
     private BufferedReader lector;
     private PrintWriter escritor;
+ 
+ 
+
     public ProtocoloServidor(Socket s){
         this.sockCliente = s;
         try {
@@ -22,7 +26,7 @@ public class ProtocoloServidor implements Runnable{
     @Override
     public void run() {
         try {
-            procesar(lector, escritor);
+            procesar();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -36,13 +40,19 @@ public class ProtocoloServidor implements Runnable{
     
     
     
-    public static void procesar(BufferedReader lector, PrintWriter escritor) throws IOException {
-        String inputLine = lector.readLine();
-        System.out.println("Entrada a procesar: "+ inputLine);
+    public void procesar() throws IOException {
+       
 
-        String outputLine = inputLine;
-
-        escritor.println(outputLine);
-        System.out.println("Salida procesada: "+outputLine);
+        String linea = lector.readLine();
+        String[] parts = linea.split("\\|");                   
+        int clienteId = Integer.parseInt(parts[0]);            
+        
+        System.out.printf("Cliente %d solicitó servicio ", clienteId);
+       
+        String hostDelegado = sockCliente.getLocalAddress().getHostAddress();
+        int puertoDelegado = ServidorPrincipal.getNextDelegatePort();
+        escritor.println(hostDelegado + "|" + puertoDelegado);
+        System.out.printf("Cliente %d asignado a delegado en %s:%d%n",
+        clienteId, hostDelegado, puertoDelegado);
     }
 }
