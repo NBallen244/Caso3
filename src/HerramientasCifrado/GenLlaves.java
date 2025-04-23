@@ -113,7 +113,7 @@ public class GenLlaves {
     }
 
     //*Genera la llave maestra del algoritmo Diffie-Hellman (G a la y*x mod p)*/
-     static BigInteger generarLlaveDh(BigInteger paramPublico, BigInteger paramSecreto, BigInteger p) {
+    public static BigInteger generarLlaveDh(BigInteger paramPublico, BigInteger paramSecreto, BigInteger p) {
         BigInteger llaveSimetrica = paramPublico.modPow(paramSecreto, p);
         return llaveSimetrica;
     }

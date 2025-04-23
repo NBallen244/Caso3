@@ -10,15 +10,15 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.InvalidParameterSpecException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.crypto.SecretKey;
 
 public class pruebacifrados {
     public static void main(String[] args) throws NoSuchAlgorithmException, InvalidParameterSpecException, IOException, ClassNotFoundException {
         // Ejemplo de uso de los métodos de cifrado y descifrado
-        Integer reto;
-        List<Integer> tablaid;
         PrivateKey clavePrivada;
         PublicKey clavePublica;
         SecretKey simetricaCifrado;
@@ -29,11 +29,13 @@ public class pruebacifrados {
         BigInteger x;
         BigInteger y;
 
-        reto= 123456; // Reto de ejemplo
-        tablaid = new ArrayList<>(); // Tabla de ID de ejemplo
-        for (int i = 0; i < 10; i++) {
-            tablaid.add(i);
-        }
+        Map <Integer, String> tablaServicios = new LinkedHashMap<>(); // Tabla de servicios
+
+        tablaServicios.put(1, "Consulta estado de vuelo");
+        tablaServicios.put(2, "Disponibilidad de vuelos");
+        tablaServicios.put(3, "Costo de vuelo");
+
+
         GenLlaves.generarLlavesAsimetricas(); // Generar llaves asimétricas
         clavePrivada = GenLlaves.recuperarKprivada(); // Recuperar llave privada
         clavePublica = GenLlaves.recuperarKpublica(); // Recuperar llave pública
@@ -51,87 +53,26 @@ public class pruebacifrados {
         simetricaCifrado=llavesSimetricas[0]; // Obtener llave de cifrado
         simetricaHash=llavesSimetricas[1]; // Obtener llave de hash
 
-        //Pasar a bytes el reto y la tabla de ID
-        byte[] retoBytes = Integer.toString(reto).getBytes(); // Convertir reto a bytes
+        //Pasar a bytes la tabla de servicios
         ByteArrayOutputStream baos = new ByteArrayOutputStream(); // Crear un flujo de bytes
-        ObjectOutputStream oos = new ObjectOutputStream(baos); // Crear un flujo de salida de objetos   
-        oos.writeObject(tablaid); // Escribir la tabla de ID en el flujo
-        byte[] tablaidBytes = baos.toByteArray(); // Obtener los bytes de la tabla de ID
-
-        //Prueba de cifrado asimetrico
-
-        byte[] retoCifrado=Casimetrico.cifrar(retoBytes, clavePublica); // Cifrar reto
-        byte[] retoDescifrado=Casimetrico.decifrar(retoCifrado, clavePrivada); // Descifrar reto
-        System.out.println("Reto cifrado:"+retoDescifrado);
-        String retoDescifradoString = new String(retoDescifrado); // Convertir bytes a string
-        Integer retoDescifradoInt = Integer.parseInt(retoDescifradoString); // Convertir string a entero
-        if (retoDescifradoInt.equals(reto)) { // Comparar el reto original con el descifrado
-            System.out.println("El reto se cifró y descifró correctamente.");
-        } else {
-            System.out.println("Error en el cifrado/descifrado del reto.");
-        }
-
-        //Prueba de cifrado simetrico
-        byte[] tablaidCifrada=Csimetrico.cifrar(tablaidBytes, simetricaCifrado, vectorCifrado); // Cifrar tabla de ID
-        byte[] tablaidDescifrada=Csimetrico.decifrar(tablaidCifrada, simetricaCifrado, vectorCifrado); // Descifrar tabla de ID
-        ByteArrayInputStream bais = new ByteArrayInputStream(tablaidDescifrada); // Crear un flujo de bytes de entrada
-        ObjectInputStream ois = new ObjectInputStream(bais); // Crear un flujo de entrada de objetos
-        List<Integer> tablaidDescifradaList = (List<Integer>) ois.readObject(); // Leer la tabla de ID descifrada
-        boolean sonIguales = true; // Variable para verificar si las tablas son iguales
-        for (int i = 0; i < tablaidDescifradaList.size(); i++) { // Comparar la tabla de ID original con la descifrada
-            if (!tablaid.get(i).equals(tablaidDescifradaList.get(i))) {
-                System.out.println("Error en el cifrado/descifrado de la tabla de ID.");
-                sonIguales = false; // Si hay una diferencia, se establece en falso
-                break;
-            }
-        }
-        if (sonIguales) { // Si todas las tablas son iguales, se imprime el mensaje
-            System.out.println("La tabla de ID se cifró y descifró correctamente.");
-        }
+        ObjectOutputStream oos = new ObjectOutputStream(baos); // Crear un flujo de salida de objetos
+        oos.writeObject(tablaServicios); // Escribir la tabla de servicios en el flujo
+        byte[] bytesTablaServicios = baos.toByteArray(); // Obtener los bytes del flujo
+        oos.close(); // Cerrar el flujo de salida
         baos.close();
-        oos.close(); // Cerrar el flujo de salida de objetos
-        bais.close(); // Cerrar el flujo de bytes de entrada
+
+        // Cifrar la tabla de servicios
+        byte[] tablaServiciosCifrada = Csimetrico.cifrar(bytesTablaServicios, simetricaCifrado, vectorCifrado);
+        byte[] tabladescifrada = Csimetrico.decifrar(tablaServiciosCifrada, simetricaCifrado, vectorCifrado); // Descifrar la tabla de servicios
+        System.out.println("Tabla de servicios decifrada: " + new String(tabladescifrada)); // Imprimir tabla de servicios cifrada
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(tabladescifrada); // Crear un flujo de entrada de bytes
+        ObjectInputStream ois = new ObjectInputStream(bais); // Crear un flujo de entrada de objetos
+        Map<Integer, String> tablaServiciosDescifrada = (Map<Integer, String>) ois.readObject(); // Leer la tabla de servicios del flujo
         ois.close(); // Cerrar el flujo de entrada de objetos
-
-        //PruebaFirmas
-        byte[] bytesG=g.toByteArray();
-        byte[] bytesP=p.toByteArray(); // Convertir p a bytes
-        byte[] bytesGx=gx.toByteArray(); // Convertir gx a bytes
-
-        byte[] firmaG=Autenticacion.generarFirma(bytesG, clavePrivada); // Generar firma de g
-        byte[] firmaP=Autenticacion.generarFirma(bytesP, clavePrivada); // Generar firma de p
-        byte[] firmaGx=Autenticacion.generarFirma(bytesGx, clavePrivada); // Generar firma de gx
-
-        if (firmaG != null && firmaP != null && firmaGx != null) { // Verificar si las firmas son válidas
-            System.out.println("Las firmas se generaron correctamente.");
-        } else {
-            System.out.println("Error al generar las firmas.");
-        }
-
-        boolean firmaVerificadaG=Autenticacion.verificarFirma(bytesG, firmaG, clavePublica); // Verificar firma de g
-        boolean firmaVerificadaP=Autenticacion.verificarFirma(bytesP, firmaP, clavePublica); // Verificar firma de p
-        boolean firmaVerificadaGx=Autenticacion.verificarFirma(bytesGx, firmaGx, clavePublica); // Verificar firma de gx
-
-        if (firmaVerificadaG && firmaVerificadaP && firmaVerificadaGx) { // Verificar si las firmas son válidas
-            System.out.println("Las firmas se verificaron correctamente.");
-        } else {
-            System.out.println("Error al verificar las firmas.");
-        }
-
-        //PruebaHMAC
-        byte[] hmacReto=Autenticacion.generarHmac(retoBytes, simetricaHash); // Generar HMAC del reto
+        bais.close(); // Cerrar el flujo de bytes
+        System.out.println("Tabla de servicios descifrada: " + tablaServiciosDescifrada); // Imprimir tabla de servicios descifrada
         
-        if (hmacReto != null) { // Verificar si el HMAC es válido
-            System.out.println("El HMAC se generó correctamente.");
-        } else {
-            System.out.println("Error al generar el HMAC.");
-        }
-        boolean hmacVerificado=Autenticacion.verificarHmac(retoBytes, hmacReto, simetricaHash); // Verificar HMAC del reto
-        if (hmacVerificado) { // Verificar si el HMAC es válido
-            System.out.println("El HMAC se verificó correctamente.");
-        } else {
-            System.out.println("Error al verificar el HMAC.");
-        }
         
 
         

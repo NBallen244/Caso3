@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.math.BigInteger;
-import java.util.List;
+import java.util.Map;
 
 public class ConversorByte {
     public static byte[] convertirIntegerAByte(Integer numero) {
@@ -19,17 +19,23 @@ public class ConversorByte {
         return Integer.parseInt(numeroString); // Convertir la cadena a número
     }
 
-    public static byte[] convertirListaAByte(List<Integer> lista) throws IOException {
+    public static byte[] convertirObjetoAByte(Object objeto) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream(); // Crear un flujo de bytes
         ObjectOutputStream oos = new ObjectOutputStream(baos); // Crear un flujo de salida de objetos
-        oos.writeObject(lista); // Escribir la lista en el flujo
-        return baos.toByteArray(); // Obtener los bytes de la lista
+        oos.writeObject(objeto); // Escribir un objeto en el flujo
+        byte[] bytes = baos.toByteArray(); // Obtener los bytes del flujo
+        oos.close(); // Cerrar el flujo de salida
+        baos.close(); // Cerrar el flujo de bytes
+        return bytes; // Obtener los bytes de la lista
     }
 
-    public static List<Integer> convertirByteALista(byte[] bytes) throws IOException, ClassNotFoundException {
+    public static Map<Integer, String> convertirByteAMapa(byte[] bytes) throws IOException, ClassNotFoundException {
         ByteArrayInputStream bais = new ByteArrayInputStream(bytes); // Crear un flujo de entrada de bytes
         ObjectInputStream ois = new ObjectInputStream(bais); // Crear un flujo de entrada de objetos
-        return (List<Integer>) ois.readObject(); // Leer la lista del flujo
+        Map<Integer, String> mapa = (Map<Integer, String>) ois.readObject(); // Leer el mapa del flujo
+        ois.close(); // Cerrar el flujo de entrada de objetos
+        bais.close(); // Cerrar el flujo de bytes
+        return mapa; // Leer el mapa del flujo
     }
 
     public static byte[] convertirBintAbyte(BigInteger numero) {

@@ -9,7 +9,7 @@ public class Casimetrico {
     private static final String ALGORITMO = "RSA";
 
     //* Cifra un mensaje en formato byte[] usando una llave publica dada */
-    public static byte[] cifrar(byte[] reto, PublicKey llave){
+    public static byte[] cifrar(byte[] reto, PrivateKey llave){
         byte[] retoCifrado;
         try {
             Cipher cipher = Cipher.getInstance(ALGORITMO);
@@ -24,7 +24,7 @@ public class Casimetrico {
     }
 
     //* Descifra un mensaje en formato byte[] usando una llave privada dada */
-    public static byte[] decifrar(byte[] retoCifrado, PrivateKey llave){
+    public static byte[] decifrar(byte[] retoCifrado, PublicKey llave){
         byte[] retoClaro;
         try {
             Cipher cipher = Cipher.getInstance(ALGORITMO);
