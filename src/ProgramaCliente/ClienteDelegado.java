@@ -1,10 +1,8 @@
 package ProgramaCliente;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
 
 public class ClienteDelegado implements Runnable  {
@@ -30,6 +28,9 @@ public class ClienteDelegado implements Runnable  {
                 ProtocoloCliente.procesar(out, in, idCliente, i);
                 out.close();
                 in.close();
+                if (socket != null && !socket.isClosed()) {
+                    socket.close();
+                }
             }
             
     

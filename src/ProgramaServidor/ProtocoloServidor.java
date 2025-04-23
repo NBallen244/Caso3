@@ -70,10 +70,10 @@ public class ProtocoloServidor {
             out.writeObject(firmaG);
             out.writeObject(firmaGx);
             out.flush();
-            System.out.println("[Servidor Delegado "+ sdelegado + "] Enviando parametros DH al cliente (P, G, G^X): " + p + " " + g + " " + gx);
+            System.out.println("[Servidor Delegado "+ sdelegado + "] Enviando parametros DH al cliente (P, G, G^X)");
             //10
             String respuestaDh = (String) in.readObject();
-            if (respuestaDh.equals("ERROR")|| respuestaDh==null) {
+            if (respuestaDh.equals("ERROR")) {
                 System.out.println("[Servidor Delegado "+ sdelegado + "] El cliente "+ cliente + " no pudo verificar la firma de uno de los parametros DH. Cerrando conexion");
                 return;
             }
@@ -88,12 +88,14 @@ public class ProtocoloServidor {
             SecretKey[] llavesSimetricas=GenLlaves.generarLlavesSimetricas(GenLlaves.generarLlaveDh(gy, x, p));
             SecretKey k_ab1=llavesSimetricas[0];
             SecretKey k_ab2=llavesSimetricas[1];
+            System.out.println("[Servidor Delegado "+ sdelegado + "] Llaves simetricas generadas");
             //12b
             byte[] vectorI=(byte[]) in.readObject();
             if (vectorI == null) {
                 System.out.println("[Servidor Delegado "+ sdelegado + "] El cliente "+ cliente + " no ha enviado el vector de inicializacion. Cerrando conexion");
                 return;
             }
+            System.out.println("[Servidor Delegado "+ sdelegado + "] El cliente "+ cliente + " ha enviado el vector de inicializacion");
             //13
             Map<Integer, String> mapa= ServidorPrincipal.getTablaServicios();
             byte[] tablaBytes=ConversorByte.convertirObjetoAByte(mapa);
@@ -107,19 +109,15 @@ public class ProtocoloServidor {
             System.out.println("[Servidor Delegado "+ sdelegado + "] Enviando HMAC de la tabla de servicios al cliente " + cliente);
             //14
             String respuestaTabla = (String) in.readObject();
-            if (respuestaTabla.equals("ERROR")|| respuestaTabla==null) {
+            if (respuestaTabla.equals("ERROR")) {
                 System.out.println("[Servidor Delegado "+ sdelegado + "] El cliente "+ cliente + " no pudo verificar el HMAC de la tabla de servicios. Cerrando conexion");
                 return;
             }
             byte[] idServicioCifrado= (byte[]) in.readObject();
             byte[] idServicioDescifrado=Csimetrico.decifrar(idServicioCifrado, k_ab1, vectorI);
-            if (idServicioCifrado == null || idServicioDescifrado == null) {
-                System.out.println("[Servidor Delegado "+ sdelegado + "] El cliente "+ cliente + " no ha enviado el id del servicio correctamente. Cerrando conexion");
-                return;
-            }
             byte[] hmacIdServicio= (byte[]) in.readObject();
-            if (hmacIdServicio == null) {
-                System.out.println("[Servidor Delegado "+ sdelegado + "] El cliente "+ cliente + " no ha enviado el HMAC del id del servicio. Cerrando conexion");
+            if (idServicioDescifrado == null) {
+                System.out.println("[Servidor Delegado "+ sdelegado + "] El cliente "+ cliente + " no ha enviado el id del servicio correctamente. Cerrando conexion");
                 return;
             }
             //15
@@ -158,12 +156,12 @@ public class ProtocoloServidor {
 
             //18
             String respuestaFinal = (String) in.readObject();
-            if (respuestaFinal.equals("ERROR")|| respuestaFinal==null) {
+            if (respuestaFinal.equals("ERROR")) {
                 System.out.println("[Servidor Delegado "+ sdelegado + "] El cliente "+ cliente + " no pudo verificar el HMAC de la IP o el puerto. Cerrando conexion");
                 return;
             }
             else{
-                System.out.println("[Servidor Delegado "+ sdelegado + "] El cliente "+ cliente + " ha concretado el protocolo. Cerrando conexion");
+                System.out.println("[Servidor Delegado "+ sdelegado + "] El cliente "+ cliente + " verifico el ip, puerto y HMAC final, concretando el protocolo. Cerrando conexion");
             }
 
         }
