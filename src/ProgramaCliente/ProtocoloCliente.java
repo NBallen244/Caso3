@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.math.BigInteger;
+import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.util.ArrayList;
@@ -21,10 +22,12 @@ import HerramientasCifrado.GenLlaves;
 
 
 public class ProtocoloCliente {
-    public static void procesar(ObjectOutputStream out, ObjectInputStream in, int idCliente, int numPeticion) throws IOException, ClassNotFoundException, NoSuchAlgorithmException {
+    public static void procesar(ObjectOutputStream out, ObjectInputStream in, int idCliente, int numPeticion, boolean decifradoRespuesta) throws IOException, ClassNotFoundException, NoSuchAlgorithmException {
         try{
             //0
             PublicKey clavePublica=Cliente.getClavePublica();
+            Key claveSimetricaRespuesta=Cliente.getClaveSimetricaRespuesta();
+
             System.out.println("[Cliente " + idCliente + " pet" +numPeticion+ "] Iniciando conexion con el servidor, recuperando llave pública.");
 
             System.out.println("[Cliente " + idCliente + " pet" +numPeticion+ "] Iniciando peticion " + numPeticion);
@@ -42,7 +45,13 @@ public class ProtocoloCliente {
             byte[] retoCifrado = (byte[]) in.readObject();
             System.out.println("[Cliente " + idCliente + " pet" +numPeticion+ "] Recibiendo reto cifrado");
             //5a
-            byte[] retoDescifrado = Casimetrico.decifrar(retoCifrado, clavePublica);
+            byte[] retoDescifrado;
+            if (decifradoRespuesta){
+                retoDescifrado = Casimetrico.decifrar(retoCifrado, clavePublica);
+            }
+            else{
+                retoDescifrado = Csimetrico.decifrarRespuesta(retoCifrado, claveSimetricaRespuesta);
+            }
             Integer retoDescifradoInt = ConversorByte.convertirByteAInteger(retoDescifrado);
             System.out.println("[Cliente " + idCliente + " pet" +numPeticion+ "] Reto descifrado: " + retoDescifradoInt);
             //5b

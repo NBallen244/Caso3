@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.math.BigInteger;
 import java.security.AlgorithmParameterGenerator;
 import java.security.AlgorithmParameters;
+import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
@@ -17,6 +18,7 @@ import java.security.PublicKey;
 import java.security.spec.InvalidParameterSpecException;
 import java.util.Arrays;
 
+import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.DHParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -49,6 +51,38 @@ public class GenLlaves {
             e.printStackTrace();
         }
     }
+
+    public static void generarLlaveSimetricaRespuesta(){
+        try{
+            KeyGenerator  keyGen = KeyGenerator.getInstance("AES");
+            keyGen.init(256); // Tamaño de la llave en bits
+            SecretKey llaveSimetrica = keyGen.generateKey();
+            // Guardar la llave en un archivo
+            FileOutputStream fos = new FileOutputStream("llaveSimetrica.txt");
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(llaveSimetrica);
+            oos.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //*Recupera la llave simetrica de respuesta desde el archivo*/
+    public static Key recuperarLlaveSimetricaRespuesta(){
+        Key llaveSimetrica = null;
+        try {
+            FileInputStream fis = new FileInputStream("llaveSimetrica.txt");
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            llaveSimetrica = (Key) ois.readObject();
+            ois.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return llaveSimetrica;
+    }
+
+
 
     //*Recupera la llave privada del RSA desde el archivo*/
     public static PrivateKey recuperarKprivada(){

@@ -7,6 +7,7 @@ import javax.crypto.spec.IvParameterSpec;
 
 public class Csimetrico {
     private static final String ALGORITMO = "AES/CBC/PKCS5Padding";
+    private static final String ALGORITMO_RESPUESTA = "AES/ECB/PKCS5Padding";
 
     //Cifra un mensaje en formato byte[] usando una llave simetrica y un vector de inicializacion dados
     public static byte[] cifrar(byte[] reto, Key llave, byte[] iv){
@@ -39,5 +40,35 @@ public class Csimetrico {
             return null;
         }
         return retoClaro;
+    }
+
+    //Cifrar con AES EBC
+    public static byte[] cifrarRespuesta(byte[] respuesta, Key llave){
+        byte[] respuestaCifrado;
+        try {
+            // Se inicializa el cifrador en modo cifrado
+            Cipher cipher = Cipher.getInstance(ALGORITMO_RESPUESTA);
+            cipher.init(Cipher.ENCRYPT_MODE, llave);
+            byte[] respuestaClaro = respuesta;  
+            respuestaCifrado = cipher.doFinal(respuestaClaro);
+            
+        } catch (Exception e) {
+            return null;
+        }
+        return respuestaCifrado;
+    }
+    //Descifrar con AES EBC
+    public static byte[] decifrarRespuesta(byte[] respuestaCifrado, Key llave){
+        byte[] respuestaClaro;
+        try {
+            // Se inicializa el cifrador en modo descifrado
+            Cipher cipher = Cipher.getInstance(ALGORITMO_RESPUESTA);
+            cipher.init(Cipher.DECRYPT_MODE, llave);
+            respuestaClaro = cipher.doFinal(respuestaCifrado);
+            
+        } catch (Exception e) {
+            return null;
+        }
+        return respuestaClaro;
     }
 }
