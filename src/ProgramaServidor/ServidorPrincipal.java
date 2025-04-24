@@ -151,6 +151,11 @@ public class ServidorPrincipal {
         if (!pool.awaitTermination(5, TimeUnit.MINUTES)) {
             pool.shutdownNow();
         }
+        try {
+            socketServidor.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         System.out.println("Todos los delegados han terminado.");
         System.out.println("Tiempo promedio de firma: " + getTiempoFirmasPromedio() + " ns");
         System.out.println("Tiempo promedio de cifrado de tabla: " + getTiempoCifradoTablaPromedio() + " ns");
