@@ -129,7 +129,7 @@ public class ServidorPrincipal {
         System.out.println("Esperando conexiones de clientes...");
 
         try {
-            socketServidor = new ServerSocket(PUERTO);
+            socketServidor = new ServerSocket(PUERTO, numerodelegados);
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(-1);
